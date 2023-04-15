@@ -425,11 +425,14 @@ class MarkdownBody extends MarkdownWidget {
     if (children!.length == 1 && shrinkWrap) {
       return children.single;
     }
-    return Column(
-      mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-      crossAxisAlignment:
-          fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
-      children: children,
+    return Semantics(
+      explicitChildNodes: true,
+      child: Column(
+        mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
+        crossAxisAlignment:
+            fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
+        children: children,
+      ),
     );
   }
 }
@@ -493,10 +496,16 @@ class Markdown extends MarkdownWidget {
   /// See also: [ScrollView.shrinkWrap]
   final bool shrinkWrap;
 
+  /// TBA
+  ///
+  /// See also: [ListView.primary]
+  final bool primary;
+
   @override
   Widget build(BuildContext context, List<Widget>? children) {
     return ListView(
       padding: padding,
+      primary: primary,
       controller: controller,
       physics: physics,
       shrinkWrap: shrinkWrap,
