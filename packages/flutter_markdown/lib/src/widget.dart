@@ -474,6 +474,7 @@ class Markdown extends MarkdownWidget {
     this.controller,
     this.physics,
     this.shrinkWrap = false,
+    this.primary,
     super.softLineBreak,
   });
 
@@ -499,7 +500,7 @@ class Markdown extends MarkdownWidget {
   /// TBA
   ///
   /// See also: [ListView.primary]
-  final bool primary;
+  final bool? primary;
 
   @override
   Widget build(BuildContext context, List<Widget>? children) {
