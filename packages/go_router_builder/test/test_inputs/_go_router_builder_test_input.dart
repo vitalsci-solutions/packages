@@ -45,21 +45,93 @@ class UnsupportedType extends GoRouteData {
 }
 
 @ShouldThrow(
-  'Required parameters cannot be nullable.',
+  'Required parameters in the path cannot be nullable.',
 )
-@TypedGoRoute<NullableRequiredParam>(path: 'bob/:id')
-class NullableRequiredParam extends GoRouteData {
-  NullableRequiredParam({required this.id});
+@TypedGoRoute<NullableRequiredParamInPath>(path: 'bob/:id')
+class NullableRequiredParamInPath extends GoRouteData {
+  NullableRequiredParamInPath({required this.id});
   final int? id;
 }
 
-@ShouldThrow(
-  'Missing param `id` in path.',
-)
-@TypedGoRoute<MissingPathParam>(path: 'bob/')
-class MissingPathParam extends GoRouteData {
-  MissingPathParam({required this.id});
-  final String id;
+@ShouldGenerate(r'''
+RouteBase get $nullableRequiredParamNotInPath => GoRouteData.$route(
+      path: 'bob',
+      factory: $NullableRequiredParamNotInPathExtension._fromState,
+    );
+
+extension $NullableRequiredParamNotInPathExtension
+    on NullableRequiredParamNotInPath {
+  static NullableRequiredParamNotInPath _fromState(GoRouterState state) =>
+      NullableRequiredParamNotInPath(
+        id: _$convertMapValue('id', state.queryParameters, int.parse),
+      );
+
+  String get location => GoRouteData.$location(
+        'bob',
+        queryParams: {
+          if (id != null) 'id': id!.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+''')
+@TypedGoRoute<NullableRequiredParamNotInPath>(path: 'bob')
+class NullableRequiredParamNotInPath extends GoRouteData {
+  NullableRequiredParamNotInPath({required this.id});
+  final int? id;
+}
+
+@ShouldGenerate(r'''
+RouteBase get $nonNullableRequiredParamNotInPath => GoRouteData.$route(
+      path: 'bob',
+      factory: $NonNullableRequiredParamNotInPathExtension._fromState,
+    );
+
+extension $NonNullableRequiredParamNotInPathExtension
+    on NonNullableRequiredParamNotInPath {
+  static NonNullableRequiredParamNotInPath _fromState(GoRouterState state) =>
+      NonNullableRequiredParamNotInPath(
+        id: int.parse(state.queryParameters['id']!),
+      );
+
+  String get location => GoRouteData.$location(
+        'bob',
+        queryParams: {
+          'id': id.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+''')
+@TypedGoRoute<NonNullableRequiredParamNotInPath>(path: 'bob')
+class NonNullableRequiredParamNotInPath extends GoRouteData {
+  NonNullableRequiredParamNotInPath({required this.id});
+  final int id;
 }
 
 @ShouldGenerate(r'''
@@ -70,7 +142,7 @@ RouteBase get $enumParam => GoRouteData.$route(
 
 extension $EnumParamExtension on EnumParam {
   static EnumParam _fromState(GoRouterState state) => EnumParam(
-        y: _$EnumTestEnumMap._$fromName(state.params['y']!),
+        y: _$EnumTestEnumMap._$fromName(state.pathParameters['y']!),
       );
 
   String get location => GoRouteData.$location(
@@ -79,10 +151,12 @@ extension $EnumParamExtension on EnumParam {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 const _$EnumTestEnumMap = {
@@ -119,7 +193,8 @@ RouteBase get $defaultValueRoute => GoRouteData.$route(
 
 extension $DefaultValueRouteExtension on DefaultValueRoute {
   static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
-        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        param:
+            _$convertMapValue('param', state.queryParameters, int.parse) ?? 0,
       );
 
   String get location => GoRouteData.$location(
@@ -131,10 +206,12 @@ extension $DefaultValueRouteExtension on DefaultValueRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 T? _$convertMapValue<T>(
@@ -160,7 +237,8 @@ RouteBase get $extraValueRoute => GoRouteData.$route(
 
 extension $ExtraValueRouteExtension on ExtraValueRoute {
   static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
-        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        param:
+            _$convertMapValue('param', state.queryParameters, int.parse) ?? 0,
         $extra: state.extra as int?,
       );
 
@@ -173,10 +251,14 @@ extension $ExtraValueRouteExtension on ExtraValueRoute {
 
   void go(BuildContext context) => context.go(location, extra: $extra);
 
-  void push(BuildContext context) => context.push(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 T? _$convertMapValue<T>(
@@ -213,10 +295,14 @@ extension $RequiredExtraValueRouteExtension on RequiredExtraValueRoute {
 
   void go(BuildContext context) => context.go(location, extra: $extra);
 
-  void push(BuildContext context) => context.push(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 ''')
 @TypedGoRoute<RequiredExtraValueRoute>(path: '/default-value-route')
@@ -259,10 +345,12 @@ extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 const _$EnumOnlyUsedInIterableEnumMap = {
@@ -312,10 +400,12 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 ''')
 @TypedGoRoute<IterableDefaultValueRoute>(path: '/iterable-default-value-route')
@@ -323,3 +413,58 @@ class IterableDefaultValueRoute extends GoRouteData {
   IterableDefaultValueRoute({this.param = const <int>[0]});
   final Iterable<int> param;
 }
+
+@ShouldGenerate(r'''
+RouteBase get $namedRoute => GoRouteData.$route(
+      path: '/named-route',
+      name: 'namedRoute',
+      factory: $NamedRouteExtension._fromState,
+    );
+
+extension $NamedRouteExtension on NamedRoute {
+  static NamedRoute _fromState(GoRouterState state) => NamedRoute();
+
+  String get location => GoRouteData.$location(
+        '/named-route',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+''')
+@TypedGoRoute<NamedRoute>(path: '/named-route', name: 'namedRoute')
+class NamedRoute extends GoRouteData {}
+
+@ShouldGenerate(r'''
+RouteBase get $namedEscapedRoute => GoRouteData.$route(
+      path: '/named-route',
+      name: r'named$Route',
+      factory: $NamedEscapedRouteExtension._fromState,
+    );
+
+extension $NamedEscapedRouteExtension on NamedEscapedRoute {
+  static NamedEscapedRoute _fromState(GoRouterState state) =>
+      NamedEscapedRoute();
+
+  String get location => GoRouteData.$location(
+        '/named-route',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+''')
+@TypedGoRoute<NamedEscapedRoute>(path: '/named-route', name: r'named$Route')
+class NamedEscapedRoute extends GoRouteData {}

@@ -1,3 +1,12 @@
+## 2.3.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 2.3.0
+
+* Adds support to receive permission requests. See
+  `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 2.2.0
 
 * Updates minimum Flutter version to 3.3.

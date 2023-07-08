@@ -1,3 +1,12 @@
+## 0.8.8
+
+* Adds `getMedia` and `getMultipleMedia` methods.
+
+## 0.8.7+4
+
+* Fixes `BuildContext` handling in example.
+* Updates metadata unit test to work on iOS 16.2.
+
 ## 0.8.7+3
 
 * Updates pigeon to fix warnings with clang 15.

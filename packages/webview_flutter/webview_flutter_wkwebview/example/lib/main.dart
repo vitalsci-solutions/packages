@@ -137,6 +137,14 @@ Page resource error:
           );
         },
       ))
+      ..setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) {
+          debugPrint(
+            'requesting permissions for ${request.types.map((WebViewPermissionResourceType type) => type.name)}',
+          );
+          request.grant();
+        },
+      )
       ..loadRequest(LoadRequestParams(
         uri: Uri.parse('https://flutter.dev'),
       ));
@@ -434,7 +442,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Widget _getCookieList(String cookies) {
-    if (cookies == null || cookies == '""') {
+    if (cookies == '""') {
       return Container();
     }
     final List<String> cookieList = cookies.split(';');

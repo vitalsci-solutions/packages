@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +17,11 @@ import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CookieManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.DownloadListenerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.FlutterAssetManagerHostApi;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.GeolocationPermissionsCallbackHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.InstanceManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaObjectHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChannelHostApi;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.PermissionRequestHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebChromeClientHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebSettingsHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebStorageHostApi;
@@ -125,10 +128,19 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             instanceManager, new WebSettingsHostApiImpl.WebSettingsCreator()));
     FlutterAssetManagerHostApi.setup(
         binaryMessenger, new FlutterAssetManagerHostApiImpl(flutterAssetManager));
-    CookieManagerHostApi.setup(binaryMessenger, new CookieManagerHostApiImpl());
+    CookieManagerHostApi.setup(
+        binaryMessenger, new CookieManagerHostApiImpl(binaryMessenger, instanceManager));
     WebStorageHostApi.setup(
         binaryMessenger,
         new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      PermissionRequestHostApi.setup(
+          binaryMessenger, new PermissionRequestHostApiImpl(binaryMessenger, instanceManager));
+    }
+    GeolocationPermissionsCallbackHostApi.setup(
+        binaryMessenger,
+        new GeolocationPermissionsCallbackHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override

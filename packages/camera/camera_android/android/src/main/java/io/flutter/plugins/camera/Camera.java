@@ -58,19 +58,18 @@ import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
+import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 @FunctionalInterface
@@ -90,13 +89,14 @@ class Camera
     supportedImageFormats = new HashMap<>();
     supportedImageFormats.put("yuv420", ImageFormat.YUV_420_888);
     supportedImageFormats.put("jpeg", ImageFormat.JPEG);
+    supportedImageFormats.put("nv21", ImageFormat.NV21);
   }
 
   /**
    * Holds all of the camera features/settings and will be used to update the request builder when
    * one changes.
    */
-  private CameraFeatures cameraFeatures;
+  CameraFeatures cameraFeatures;
 
   private String imageFormatGroup;
 
@@ -116,28 +116,28 @@ class Camera
   private final ResolutionPreset resolutionPreset;
   private final boolean enableAudio;
   private final Context applicationContext;
-  private final DartMessenger dartMessenger;
+  final DartMessenger dartMessenger;
   private CameraProperties cameraProperties;
   private final CameraFeatureFactory cameraFeatureFactory;
   private final Activity activity;
   /** A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture. */
   private final CameraCaptureCallback cameraCaptureCallback;
   /** A {@link Handler} for running tasks in the background. */
-  private Handler backgroundHandler;
+  Handler backgroundHandler;
 
   /** An additional thread for running tasks that shouldn't block the UI. */
   private HandlerThread backgroundHandlerThread;
 
-  private CameraDeviceWrapper cameraDevice;
-  private CameraCaptureSession captureSession;
+  CameraDeviceWrapper cameraDevice;
+  CameraCaptureSession captureSession;
   private ImageReader pictureImageReader;
-  private ImageReader imageStreamReader;
+  ImageStreamReader imageStreamReader;
   /** {@link CaptureRequest.Builder} for the camera preview */
-  private CaptureRequest.Builder previewRequestBuilder;
+  CaptureRequest.Builder previewRequestBuilder;
 
   private MediaRecorder mediaRecorder;
   /** True when recording video. */
-  private boolean recordingVideo;
+  boolean recordingVideo;
   /** True when the preview is paused. */
   private boolean pausedPreview;
 
@@ -148,13 +148,13 @@ class Camera
   /** Holds the last known capture properties */
   private CameraCaptureProperties captureProps;
 
-  private MethodChannel.Result flutterResult;
+  MethodChannel.Result flutterResult;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
     private final CameraDevice cameraDevice;
 
-    private DefaultCameraDeviceWrapper(CameraDevice cameraDevice) {
+    DefaultCameraDeviceWrapper(CameraDevice cameraDevice) {
       this.cameraDevice = cameraDevice;
     }
 
@@ -171,7 +171,6 @@ class Camera
       cameraDevice.createCaptureSession(config);
     }
 
-    @TargetApi(VERSION_CODES.LOLLIPOP)
     @SuppressWarnings("deprecation")
     @Override
     public void createCaptureSession(
@@ -235,9 +234,11 @@ class Camera
    *
    * @param requestBuilder request builder to update.
    */
-  private void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
+  void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
     for (CameraFeature<?> feature : cameraFeatures.getAllFeatures()) {
-      Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
+      if (BuildConfig.DEBUG) {
+        Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
+      }
       feature.updateBuilder(requestBuilder);
     }
   }
@@ -305,7 +306,7 @@ class Camera
       imageFormat = ImageFormat.YUV_420_888;
     }
     imageStreamReader =
-        ImageReader.newInstance(
+        new ImageStreamReader(
             resolutionFeature.getPreviewSize().getWidth(),
             resolutionFeature.getPreviewSize().getHeight(),
             imageFormat,
@@ -321,17 +322,19 @@ class Camera
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
               startPreview();
-              if (!recordingVideo) // only send initialization if we werent already recording and switching cameras
-              dartMessenger.sendCameraInitializedEvent(
+              if (!recordingVideo) { // only send initialization if we werent already recording and switching cameras
+                dartMessenger.sendCameraInitializedEvent(
                     resolutionFeature.getPreviewSize().getWidth(),
                     resolutionFeature.getPreviewSize().getHeight(),
                     cameraFeatures.getExposureLock().getValue(),
                     cameraFeatures.getAutoFocus().getValue(),
                     cameraFeatures.getExposurePoint().checkIsSupported(),
                     cameraFeatures.getFocusPoint().checkIsSupported());
-
+              }
             } catch (Exception e) {
-              Log.i(TAG, "open | onOpened error: " + e.getMessage());
+              if (BuildConfig.DEBUG) {
+                Log.i(TAG, "open | onOpened error: " + e.getMessage());
+              }
               dartMessenger.sendCameraErrorEvent(e.getMessage());
               close();
             }
@@ -412,8 +415,14 @@ class Camera
 
     List<Surface> remainingSurfaces = Arrays.asList(surfaces);
     if (templateType != CameraDevice.TEMPLATE_PREVIEW) {
-      // If it is not preview mode, add all surfaces as targets.
+      // If it is not preview mode, add all surfaces as targets
+      // except the surface used for still capture as this should
+      // not be part of a repeating request.
+      Surface pictureImageReaderSurface = pictureImageReader.getSurface();
       for (Surface surface : remainingSurfaces) {
+        if (surface == pictureImageReaderSurface) {
+          continue;
+        }
         previewRequestBuilder.addTarget(surface);
       }
     }
@@ -489,7 +498,6 @@ class Camera
             callback));
   }
 
-  @TargetApi(VERSION_CODES.LOLLIPOP)
   @SuppressWarnings("deprecation")
   private void createCaptureSession(
       List<Surface> surfaces, CameraCaptureSession.StateCallback callback)
@@ -498,7 +506,7 @@ class Camera
   }
 
   // Send a repeating request to refresh  capture session.
-  private void refreshPreviewCaptureSession(
+  void refreshPreviewCaptureSession(
       @Nullable Runnable onSuccessCallback, @NonNull ErrorCallback onErrorCallback) {
     Log.i(TAG, "refreshPreviewCaptureSession");
 
@@ -534,9 +542,13 @@ class Camera
       surfaces.add(mediaRecorder.getSurface());
       successCallback = () -> mediaRecorder.start();
     }
-    if (stream) {
+    if (stream && imageStreamReader != null) {
       surfaces.add(imageStreamReader.getSurface());
     }
+
+    // Add pictureImageReader surface to allow for still capture
+    // during recording/image streaming.
+    surfaces.add(pictureImageReader.getSurface());
 
     createCaptureSession(
         CameraDevice.TEMPLATE_RECORD, successCallback, surfaces.toArray(new Surface[0]));
@@ -658,7 +670,6 @@ class Camera
         };
 
     try {
-      captureSession.stopRepeating();
       Log.i(TAG, "sending capture request");
       captureSession.capture(stillBuilder.build(), captureCallback, backgroundHandler);
     } catch (CameraAccessException e) {
@@ -722,7 +733,7 @@ class Camera
   }
 
   /** Cancel and reset auto focus state and refresh the preview session. */
-  private void unlockAutoFocus() {
+  void unlockAutoFocus() {
     Log.i(TAG, "unlockAutoFocus");
     if (captureSession == null) {
       Log.i(TAG, "[unlockAutoFocus] captureSession null, returning");
@@ -1139,10 +1150,15 @@ class Camera
   public void onImageAvailable(ImageReader reader) {
     Log.i(TAG, "onImageAvailable");
 
+    // Use acquireNextImage since image reader is only for one image.
+    Image image = reader.acquireNextImage();
+    if (image == null) {
+      return;
+    }
+
     backgroundHandler.post(
         new ImageSaver(
-            // Use acquireNextImage since image reader is only for one image.
-            reader.acquireNextImage(),
+            image,
             captureFile,
             new ImageSaver.Callback() {
               @Override
@@ -1158,7 +1174,8 @@ class Camera
     cameraCaptureCallback.setCameraState(CameraState.STATE_PREVIEW);
   }
 
-  private void prepareRecording(@NonNull Result result) {
+  @VisibleForTesting
+  void prepareRecording(@NonNull Result result) {
     final File outputDir = applicationContext.getCacheDir();
     try {
       captureFile = File.createTempFile("REC", ".mp4", outputDir);
@@ -1189,52 +1206,24 @@ class Camera
 
           @Override
           public void onCancel(Object o) {
-            imageStreamReader.setOnImageAvailableListener(null, backgroundHandler);
+            if (imageStreamReader == null) {
+              return;
+            }
+
+            imageStreamReader.removeListener(backgroundHandler);
           }
         });
   }
 
-  private void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
-    imageStreamReader.setOnImageAvailableListener(
-        reader -> {
-          Image img = reader.acquireNextImage();
-          // Use acquireNextImage since image reader is only for one image.
-          if (img == null) return;
+  void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
+    if (imageStreamReader == null) {
+      return;
+    }
 
-          List<Map<String, Object>> planes = new ArrayList<>();
-          for (Image.Plane plane : img.getPlanes()) {
-            ByteBuffer buffer = plane.getBuffer();
-
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes, 0, bytes.length);
-
-            Map<String, Object> planeBuffer = new HashMap<>();
-            planeBuffer.put("bytesPerRow", plane.getRowStride());
-            planeBuffer.put("bytesPerPixel", plane.getPixelStride());
-            planeBuffer.put("bytes", bytes);
-
-            planes.add(planeBuffer);
-          }
-
-          Map<String, Object> imageBuffer = new HashMap<>();
-          imageBuffer.put("width", img.getWidth());
-          imageBuffer.put("height", img.getHeight());
-          imageBuffer.put("format", img.getFormat());
-          imageBuffer.put("planes", planes);
-          imageBuffer.put("lensAperture", this.captureProps.getLastLensAperture());
-          imageBuffer.put("sensorExposureTime", this.captureProps.getLastSensorExposureTime());
-          Integer sensorSensitivity = this.captureProps.getLastSensorSensitivity();
-          imageBuffer.put(
-              "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
-
-          final Handler handler = new Handler(Looper.getMainLooper());
-          handler.post(() -> imageStreamSink.success(imageBuffer));
-          img.close();
-        },
-        backgroundHandler);
+    imageStreamReader.subscribeListener(this.captureProps, imageStreamSink, backgroundHandler);
   }
 
-  private void closeCaptureSession() {
+  void closeCaptureSession() {
     if (captureSession != null) {
       Log.i(TAG, "closeCaptureSession");
 

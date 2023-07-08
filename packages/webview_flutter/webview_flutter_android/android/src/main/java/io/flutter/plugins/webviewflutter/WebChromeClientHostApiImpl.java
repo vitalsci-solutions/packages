@@ -7,6 +7,8 @@ package io.flutter.plugins.webviewflutter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
+import android.webkit.GeolocationPermissions;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -50,6 +52,17 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       flutterApi.onProgressChanged(this, view, (long) progress, reply -> {});
     }
 
+    @Override
+    public void onGeolocationPermissionsShowPrompt(
+        @NonNull String origin, @NonNull GeolocationPermissions.Callback callback) {
+      flutterApi.onGeolocationPermissionsShowPrompt(this, origin, callback, reply -> {});
+    }
+
+    @Override
+    public void onGeolocationPermissionsHidePrompt() {
+      flutterApi.onGeolocationPermissionsHidePrompt(this, reply -> {});
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressWarnings("LambdaLast")
     @Override
@@ -74,6 +87,12 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
             }
           });
       return currentReturnValueForOnShowFileChooser;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onPermissionRequest(@NonNull PermissionRequest request) {
+      flutterApi.onPermissionRequest(this, request, reply -> {});
     }
 
     /** Sets return value for {@link #onShowFileChooser}. */
@@ -136,6 +155,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
               return true;
             }
 
+            // Legacy codepath for < N.
             @Override
             @SuppressWarnings({"deprecation", "RedundantSuppression"})
             public boolean shouldOverrideUrlLoading(WebView windowWebView, String url) {

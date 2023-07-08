@@ -27,10 +27,12 @@ extension $LoginRouteExtension on LoginRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $myShellRouteData => ShellRouteData.$route(
@@ -61,10 +63,12 @@ extension $FooRouteDataExtension on FooRouteData {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $BarRouteDataExtension on BarRouteData {
@@ -76,8 +80,10 @@ extension $BarRouteDataExtension on BarRouteData {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

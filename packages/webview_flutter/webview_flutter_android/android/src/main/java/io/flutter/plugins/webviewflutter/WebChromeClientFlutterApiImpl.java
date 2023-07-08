@@ -5,6 +5,8 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
+import android.webkit.GeolocationPermissions;
+import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
@@ -68,6 +70,50 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(fileChooserParams)),
+        callback);
+  }
+
+  /** Passes arguments from {@link WebChromeClient#onGeolocationPermissionsShowPrompt} to Dart. */
+  public void onGeolocationPermissionsShowPrompt(
+      @NonNull WebChromeClient webChromeClient,
+      @NonNull String origin,
+      @NonNull GeolocationPermissions.Callback callback,
+      @NonNull WebChromeClientFlutterApi.Reply<Void> replyCallback) {
+    new GeolocationPermissionsCallbackFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(callback, reply -> {});
+    onGeolocationPermissionsShowPrompt(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(callback)),
+        origin,
+        replyCallback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onGeolocationPermissionsHidePrompt` on the
+   * Dart object representing `instance`.
+   */
+  public void onGeolocationPermissionsHidePrompt(
+      @NonNull WebChromeClient instance, @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    super.onGeolocationPermissionsHidePrompt(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onPermissionRequest` on the Dart object
+   * representing `instance`.
+   */
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  public void onPermissionRequest(
+      @NonNull WebChromeClient instance,
+      @NonNull PermissionRequest request,
+      @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    new PermissionRequestFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(request, request.getResources(), reply -> {});
+
+    super.onPermissionRequest(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(request)),
         callback);
   }
 
