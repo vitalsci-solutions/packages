@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Deletes deprecated splash screen meta-data element.
+
 ## 2.2.0
 
 * Adds `clearWithParameters` and `getAllWithParameters` methods.

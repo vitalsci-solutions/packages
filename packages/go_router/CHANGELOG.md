@@ -1,3 +1,28 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 10.1.0
+
+- Supports setting `requestFocus`.
+
+## 10.0.0
+
+- **BREAKING CHANGE**:
+  - Replaces location, queryParameters, and queryParametersAll in GoRouterState with Uri.
+  - See [Migrating to 10.0.0](https://flutter.dev/go/go-router-v10-breaking-changes) or
+    run `dart fix --apply` to fix the breakages.
+
+## 9.1.1
+
+- Fixes a link in error handling documentation.
+
+## 9.1.0
+
+- Adds the parentNavigatorKey parameter to ShellRouteData and StatefulShellRouteData.
+- Fixes a typo in docs for `StatefulShellRoute.indexedStack(...)`.
+- Cleans some typos in the documentation and asserts.
+
 ## 9.0.3
 
 - Adds helpers for go_router_builder for StatefulShellRoute support

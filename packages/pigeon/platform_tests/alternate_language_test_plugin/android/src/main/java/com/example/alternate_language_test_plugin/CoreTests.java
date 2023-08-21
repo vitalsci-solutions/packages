@@ -233,6 +233,19 @@ public class CoreTests {
       this.aString = setterArg;
     }
 
+    private @NonNull Object anObject;
+
+    public @NonNull Object getAnObject() {
+      return anObject;
+    }
+
+    public void setAnObject(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"anObject\" is null.");
+      }
+      this.anObject = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllTypes() {}
 
@@ -322,6 +335,13 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable Object anObject;
+
+      public @NonNull Builder setAnObject(@NonNull Object setterArg) {
+        this.anObject = setterArg;
+        return this;
+      }
+
       public @NonNull AllTypes build() {
         AllTypes pigeonReturn = new AllTypes();
         pigeonReturn.setABool(aBool);
@@ -336,13 +356,14 @@ public class CoreTests {
         pigeonReturn.setAMap(aMap);
         pigeonReturn.setAnEnum(anEnum);
         pigeonReturn.setAString(aString);
+        pigeonReturn.setAnObject(anObject);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(12);
+      ArrayList<Object> toListResult = new ArrayList<Object>(13);
       toListResult.add(aBool);
       toListResult.add(anInt);
       toListResult.add(anInt64);
@@ -355,6 +376,7 @@ public class CoreTests {
       toListResult.add(aMap);
       toListResult.add(anEnum == null ? null : anEnum.index);
       toListResult.add(aString);
+      toListResult.add(anObject);
       return toListResult;
     }
 
@@ -388,6 +410,8 @@ public class CoreTests {
       pigeonResult.setAnEnum(anEnum == null ? null : AnEnum.values()[(int) anEnum]);
       Object aString = list.get(11);
       pigeonResult.setAString((String) aString);
+      Object anObject = list.get(12);
+      pigeonResult.setAnObject(anObject);
       return pigeonResult;
     }
   }
@@ -548,6 +572,16 @@ public class CoreTests {
       this.aNullableString = setterArg;
     }
 
+    private @Nullable Object aNullableObject;
+
+    public @Nullable Object getANullableObject() {
+      return aNullableObject;
+    }
+
+    public void setANullableObject(@Nullable Object setterArg) {
+      this.aNullableObject = setterArg;
+    }
+
     public static final class Builder {
 
       private @Nullable Boolean aNullableBool;
@@ -656,6 +690,13 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable Object aNullableObject;
+
+      public @NonNull Builder setANullableObject(@Nullable Object setterArg) {
+        this.aNullableObject = setterArg;
+        return this;
+      }
+
       public @NonNull AllNullableTypes build() {
         AllNullableTypes pigeonReturn = new AllNullableTypes();
         pigeonReturn.setANullableBool(aNullableBool);
@@ -673,13 +714,14 @@ public class CoreTests {
         pigeonReturn.setNullableMapWithObject(nullableMapWithObject);
         pigeonReturn.setANullableEnum(aNullableEnum);
         pigeonReturn.setANullableString(aNullableString);
+        pigeonReturn.setANullableObject(aNullableObject);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(15);
+      ArrayList<Object> toListResult = new ArrayList<Object>(16);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -695,6 +737,7 @@ public class CoreTests {
       toListResult.add(nullableMapWithObject);
       toListResult.add(aNullableEnum == null ? null : aNullableEnum.index);
       toListResult.add(aNullableString);
+      toListResult.add(aNullableObject);
       return toListResult;
     }
 
@@ -739,6 +782,8 @@ public class CoreTests {
           aNullableEnum == null ? null : AnEnum.values()[(int) aNullableEnum]);
       Object aNullableString = list.get(14);
       pigeonResult.setANullableString((String) aNullableString);
+      Object aNullableObject = list.get(15);
+      pigeonResult.setANullableObject(aNullableObject);
       return pigeonResult;
     }
   }
@@ -1121,7 +1166,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.noop", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1143,7 +1190,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllTypes",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1168,7 +1215,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwError",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1191,7 +1238,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1214,7 +1261,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterError",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1236,7 +1283,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoInt", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1260,7 +1309,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoDouble",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1284,7 +1333,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoBool", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1308,7 +1359,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1333,7 +1384,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoUint8List",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1358,7 +1409,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoObject",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1382,7 +1433,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoList", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1405,7 +1458,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoMap", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1429,7 +1484,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1454,7 +1509,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1479,7 +1534,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedNullableString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1504,7 +1559,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.createNestedNullableString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1529,7 +1584,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.sendMultipleNullableTypes",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1560,7 +1615,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableInt",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1587,7 +1642,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableDouble",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1612,7 +1667,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableBool",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1637,7 +1692,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1662,7 +1717,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableUint8List",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1687,7 +1742,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableObject",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1712,7 +1767,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableList",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1737,7 +1792,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableMap",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1761,7 +1816,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1789,7 +1846,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncInt",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1820,7 +1877,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncDouble",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1851,7 +1908,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncBool",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1882,7 +1939,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1913,7 +1970,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncUint8List",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1944,7 +2001,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncObject",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -1975,7 +2032,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncList",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2006,7 +2063,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncMap",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2037,7 +2094,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2066,7 +2123,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncErrorFromVoid",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2095,7 +2152,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterError",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2124,7 +2181,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllTypes",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2155,7 +2212,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2186,7 +2243,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableInt",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2218,7 +2275,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableDouble",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2249,7 +2306,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableBool",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2280,7 +2337,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2311,7 +2368,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableUint8List",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2342,7 +2399,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableObject",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2373,7 +2430,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableList",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2404,7 +2461,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableMap",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2435,7 +2492,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2464,7 +2521,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2493,7 +2550,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2522,7 +2579,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2553,7 +2610,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2590,7 +2647,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoBool",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2621,7 +2678,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoInt",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2653,7 +2710,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoDouble",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2684,7 +2741,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2715,7 +2772,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoUint8List",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2746,7 +2803,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoList",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2777,7 +2834,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoMap",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2808,7 +2865,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableBool",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2839,7 +2896,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableInt",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2871,7 +2928,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableDouble",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2902,7 +2959,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableString",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2933,7 +2990,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableUint8List",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2964,7 +3021,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableList",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -2995,7 +3052,7 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableMap",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -3095,7 +3152,9 @@ public class CoreTests {
     public void noop(@NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.noop", getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop",
+              getCodec());
       channel.send(null, channelReply -> callback.reply(null));
     }
     /** Responds with an error from an async function returning a value. */
@@ -3103,7 +3162,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError",
               getCodec());
       channel.send(
           null,
@@ -3118,7 +3177,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid",
               getCodec());
       channel.send(null, channelReply -> callback.reply(null));
     }
@@ -3127,7 +3186,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(everythingArg)),
@@ -3143,7 +3202,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(everythingArg)),
@@ -3166,7 +3225,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes",
               getCodec());
       channel.send(
           new ArrayList<Object>(
@@ -3181,7 +3240,9 @@ public class CoreTests {
     public void echoBool(@NonNull Boolean aBoolArg, @NonNull Reply<Boolean> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool",
+              getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aBoolArg)),
           channelReply -> {
@@ -3194,7 +3255,9 @@ public class CoreTests {
     public void echoInt(@NonNull Long anIntArg, @NonNull Reply<Long> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt", getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt",
+              getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(anIntArg)),
           channelReply -> {
@@ -3208,7 +3271,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
@@ -3223,7 +3286,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
@@ -3238,7 +3301,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
@@ -3252,7 +3315,9 @@ public class CoreTests {
     public void echoList(@NonNull List<Object> aListArg, @NonNull Reply<List<Object>> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList", getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList",
+              getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
           channelReply -> {
@@ -3266,7 +3331,9 @@ public class CoreTests {
         @NonNull Map<String, Object> aMapArg, @NonNull Reply<Map<String, Object>> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap", getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap",
+              getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aMapArg)),
           channelReply -> {
@@ -3280,7 +3347,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aBoolArg)),
@@ -3295,7 +3362,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(anIntArg)),
@@ -3310,7 +3377,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
@@ -3325,7 +3392,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
@@ -3340,7 +3407,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
@@ -3356,7 +3423,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
@@ -3372,7 +3439,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aMapArg)),
@@ -3390,7 +3457,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync",
               getCodec());
       channel.send(null, channelReply -> callback.reply(null));
     }
@@ -3399,7 +3466,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString",
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
@@ -3428,7 +3495,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostTrivialApi.noop", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3468,7 +3537,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostSmallApi.echo", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3497,7 +3568,9 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.HostSmallApi.voidVoid", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3575,7 +3648,9 @@ public class CoreTests {
     public void echoWrappedList(@NonNull TestMessage msgArg, @NonNull Reply<TestMessage> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.FlutterSmallApi.echoWrappedList", getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList",
+              getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(msgArg)),
           channelReply -> {

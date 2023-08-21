@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.8.7+4
+
+* Updates the example to use the latest versions of the platform interface APIs.
+
 ## 0.8.7+3
 
 * Bumps androidx.activity:activity from 1.7.1 to 1.7.2.

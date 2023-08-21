@@ -1,3 +1,24 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.9.3
+
+* Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
+
+## 3.9.2
+
+* Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller or PlatformView
+  implementation flag changes. 
+
+## 3.9.1
+
+* Adjusts SDK checks for better testability.
+
+## 3.9.0
+
+* Adds support for `WebResouceError.url`.
+
 ## 3.8.2
 
 * Fixes unawaited_futures violations.

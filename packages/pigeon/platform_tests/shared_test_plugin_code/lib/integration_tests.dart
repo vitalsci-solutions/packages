@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#10_regularInt31)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,6 +52,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(listEquals(allTypesOne.aList, allTypesTwo.aList), true);
     expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
     expect(allTypesOne.anEnum, allTypesTwo.anEnum);
+    expect(allTypesOne.anObject, allTypesTwo.anObject);
   }
 
   void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
@@ -105,6 +102,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         mapEquals(allNullableTypesOne.nullableMapWithObject,
             allNullableTypesTwo.nullableMapWithObject),
         true);
+    expect(allNullableTypesOne.aNullableObject,
+        allNullableTypesTwo.aNullableObject);
     // TODO(stuartmorgan): Fix and re-enable.
     // See https://github.com/flutter/flutter/issues/118733
     if (targetGenerator != TargetGenerator.objc) {
@@ -144,6 +143,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       'e': null
     },
     anEnum: AnEnum.two,
+    anObject: 0,
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
@@ -171,6 +171,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     nullableMapWithAnnotations: <String?, String?>{},
     nullableMapWithObject: <String?, Object?>{},
     aNullableEnum: AnEnum.two,
+    aNullableObject: 0,
   );
 
   group('Host sync API tests', () {

@@ -1,3 +1,19 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.10.8+6
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
+## 0.10.8+5
+
+* Provides a default exposure point if null.
+
+## 0.10.8+4
+
+* Adjusts SDK checks for better testability.
+
 ## 0.10.8+3
 
 * Fixes unawaited_futures violations.

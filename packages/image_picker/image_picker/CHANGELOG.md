@@ -1,3 +1,16 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.2
+
+* Adds compatibility with `image_picker_for_web` 3.0.
+
+## 1.0.1
+
+* Rolls platform implementations to ensure that `pickMedia` and
+  `pickMultipleMedia` have platform implementations.
+
 ## 1.0.0
 
 * **BREAKING CHANGE**: Removes the deprecated `get*` methods. Clients who have
