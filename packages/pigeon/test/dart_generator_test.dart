@@ -694,7 +694,7 @@ void main() {
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
     expect(testCode, contains('output'));
-    expect(testCode, contains('return <Object?>[];'));
+    expect(testCode, contains('return <Object?>[output];'));
   });
 
   test('gen one async Flutter Api', () {
@@ -1611,6 +1611,6 @@ name: foobar
     expect(
         testCode,
         contains(
-            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0] as int]'));
+            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0]! as int]'));
   });
 }
