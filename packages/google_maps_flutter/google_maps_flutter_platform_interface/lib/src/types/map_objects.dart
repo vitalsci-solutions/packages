@@ -19,6 +19,7 @@ class MapObjects {
     this.markers = const <Marker>{},
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.circles = const <Circle>{},
     this.tileOverlays = const <TileOverlay>{},
   });
@@ -26,6 +27,7 @@ class MapObjects {
   final Set<Marker> markers;
   final Set<Polygon> polygons;
   final Set<Polyline> polylines;
+  final Set<GroundOverlay> groundOverlays;
   final Set<Circle> circles;
   final Set<TileOverlay> tileOverlays;
 }

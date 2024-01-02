@@ -22,8 +22,3 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.3
-
-topics:
-  - google-maps
-  - google-maps-flutter
-  - map
