@@ -869,24 +869,13 @@ class MarkdownBuilder implements md.NodeVisitor {
   Widget _buildRichText(TextSpan? text, {TextAlign? textAlign, String? key}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
-    if (selectable) {
-      return SelectableText.rich(
-        text!,
-        // ignore: deprecated_member_use
-        textScaleFactor: styleSheet.textScaleFactor,
-        textAlign: textAlign ?? TextAlign.start,
-        onTap: onTapText,
-        key: k,
-      );
-    } else {
-      return RichText(
-        text: text!,
-        // ignore: deprecated_member_use
-        textScaleFactor: styleSheet.textScaleFactor!,
-        textAlign: textAlign ?? TextAlign.start,
-        key: k,
-      );
-    }
+    return Text.rich(
+      text!,
+      // ignore: deprecated_member_use
+      textScaleFactor: styleSheet.textScaleFactor!,
+      textAlign: textAlign ?? TextAlign.start,
+      key: k,
+    );
   }
 
   /// This allows a value of type T or T? to be treated as a value of type T?.
