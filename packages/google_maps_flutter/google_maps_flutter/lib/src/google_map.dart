@@ -198,7 +198,7 @@ class GoogleMap extends StatefulWidget {
   /// Polylines to be placed on the map.
   final Set<Polyline> polylines;
 
-    /// GroundOverlays to be placed on the map.
+  /// GroundOverlays to be placed on the map.
   final Set<GroundOverlay> groundOverlays;
 
   /// Circles to be placed on the map.
@@ -317,7 +317,7 @@ class _GoogleMapState extends State<GoogleMap> {
   Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
-    Map<GroundOverlayId, GroundOverlay> _groundOverlays =
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays =
       <GroundOverlayId, GroundOverlay>{};
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
   late MapConfiguration _mapConfiguration;
@@ -411,7 +411,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _polylines = keyByPolylineId(widget.polylines);
   }
 
-    Future<void> _updateGroundOverlays() async {
+  Future<void> _updateGroundOverlays() async {
     final GoogleMapController controller = await _controller.future;
     // ignore: unawaited_futures
     controller._updateGroundOverlays(GroundOverlayUpdates.from(
@@ -511,8 +511,7 @@ class _GoogleMapState extends State<GoogleMap> {
     }
   }
 
-    void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
-    assert(groundOverlayId != null);
+  void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
     final GroundOverlay? groundOverlay = _groundOverlays[groundOverlayId];
     if (groundOverlay == null) {
       throw UnknownMapObjectIdError('groundOverlay', groundOverlayId, 'onTap');

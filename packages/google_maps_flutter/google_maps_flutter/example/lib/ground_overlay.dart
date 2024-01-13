@@ -99,6 +99,18 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
     setState(() {
       groundOverlays[overlayId] = overlay;
     });
+
+    // animate to the bounds of the ground overlay
+    final LatLngBounds cameraUpdateBounds = LatLngBounds(
+      southwest: const LatLng(40.712216, -74.22655),
+      northeast: const LatLng(40.773941, -74.12544),
+    );
+
+    if (context.mounted) {
+      await controller!.animateCamera(
+        CameraUpdate.newLatLngBounds(cameraUpdateBounds, 0),
+      );
+    }
   }
 
   void _changeOpacity(double opacity) {

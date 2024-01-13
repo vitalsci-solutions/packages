@@ -338,12 +338,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     );
   }
 
-    @override
+  @override
   Future<void> updateGroundOverlays(
     GroundOverlayUpdates groundOverlayUpdates, {
     required int mapId,
   }) {
-    assert(groundOverlayUpdates != null);
     return _channel(mapId).invokeMethod<void>(
       'groundOverlays#update',
       groundOverlayUpdates.toJson(),
@@ -516,7 +515,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       'markersToAdd': serializeMarkerSet(mapObjects.markers),
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
-      'groundOverlaysToAdd': serializeGroundOverlaySet(mapObjects.groundOverlays),
+      'groundOverlaysToAdd':
+          serializeGroundOverlaySet(mapObjects.groundOverlays),
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
     };
