@@ -488,7 +488,6 @@ class Markdown extends MarkdownWidget {
     this.controller,
     this.physics,
     this.shrinkWrap = false,
-    this.primary,
     super.softLineBreak,
   });
 
@@ -511,16 +510,10 @@ class Markdown extends MarkdownWidget {
   /// See also: [ScrollView.shrinkWrap]
   final bool shrinkWrap;
 
-  /// TBA
-  ///
-  /// See also: [ListView.primary]
-  final bool? primary;
-
   @override
   Widget build(BuildContext context, List<Widget>? children) {
     return ListView(
       padding: padding,
-      primary: primary,
       controller: controller,
       physics: physics,
       shrinkWrap: shrinkWrap,
