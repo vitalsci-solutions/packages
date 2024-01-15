@@ -111,6 +111,9 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
         CameraUpdate.newLatLngBounds(cameraUpdateBounds, 0),
       );
     }
+
+    // select the newly added ground overlay
+    selectedGroundOverlay = overlayId;
   }
 
   void _changeOpacity(double opacity) {

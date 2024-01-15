@@ -24,12 +24,15 @@ class GoogleMapController {
         _markers = mapObjects.markers,
         _polygons = mapObjects.polygons,
         _polylines = mapObjects.polylines,
+        _groundOverlays = mapObjects.groundOverlays,
         _circles = mapObjects.circles,
         _tileOverlays = mapObjects.tileOverlays,
         _lastMapConfiguration = mapConfiguration {
     _circlesController = CirclesController(stream: _streamController);
     _polygonsController = PolygonsController(stream: _streamController);
     _polylinesController = PolylinesController(stream: _streamController);
+    _groundOverlaysController =
+        GroundOverlaysController(stream: _streamController);
     _markersController = MarkersController(stream: _streamController);
     _tileOverlaysController = TileOverlaysController();
 
@@ -54,6 +57,7 @@ class GoogleMapController {
   final Set<Marker> _markers;
   final Set<Polygon> _polygons;
   final Set<Polyline> _polylines;
+  final Set<GroundOverlay> _groundOverlays;
   final Set<Circle> _circles;
   Set<TileOverlay> _tileOverlays;
   // The configuration passed by the user, before converting to gmaps.
@@ -110,6 +114,7 @@ class GoogleMapController {
   CirclesController? _circlesController;
   PolygonsController? _polygonsController;
   PolylinesController? _polylinesController;
+  GroundOverlaysController? _groundOverlaysController;
   MarkersController? _markersController;
   TileOverlaysController? _tileOverlaysController;
   // Keeps track if _attachGeometryControllers has been called or not.
@@ -126,6 +131,7 @@ class GoogleMapController {
     CirclesController? circles,
     PolygonsController? polygons,
     PolylinesController? polylines,
+    GroundOverlaysController? groundOverlays,
     TileOverlaysController? tileOverlays,
   }) {
     _overrideCreateMap = createMap;
@@ -133,6 +139,7 @@ class GoogleMapController {
     _circlesController = circles ?? _circlesController;
     _polygonsController = polygons ?? _polygonsController;
     _polylinesController = polylines ?? _polylinesController;
+    _groundOverlaysController = groundOverlays ?? _groundOverlaysController;
     _tileOverlaysController = tileOverlays ?? _tileOverlaysController;
   }
 
@@ -239,6 +246,8 @@ class GoogleMapController {
         'Cannot attach a map to a null PolygonsController instance.');
     assert(_polylinesController != null,
         'Cannot attach a map to a null PolylinesController instance.');
+    assert(_groundOverlaysController != null,
+        'Cannot attach a map to a null GroundOverlaysController instance.');
     assert(_markersController != null,
         'Cannot attach a map to a null MarkersController instance.');
     assert(_tileOverlaysController != null,
@@ -247,6 +256,7 @@ class GoogleMapController {
     _circlesController!.bindToMap(_mapId, map);
     _polygonsController!.bindToMap(_mapId, map);
     _polylinesController!.bindToMap(_mapId, map);
+    _groundOverlaysController!.bindToMap(_mapId, map);
     _markersController!.bindToMap(_mapId, map);
     _tileOverlaysController!.bindToMap(_mapId, map);
 
@@ -268,6 +278,7 @@ class GoogleMapController {
     _circlesController!.addCircles(_circles);
     _polygonsController!.addPolygons(_polygons);
     _polylinesController!.addPolylines(_polylines);
+    _groundOverlaysController!.addGroundOverlays(_groundOverlays);
     _tileOverlaysController!.addTileOverlays(_tileOverlays);
   }
 
@@ -397,6 +408,17 @@ class GoogleMapController {
     _polylinesController?.removePolylines(updates.polylineIdsToRemove);
   }
 
+  /// Applies [GroundOverlayUpdates] to the currently managed ground overlays.
+  void updateGroundOverlays(GroundOverlayUpdates updates) {
+    assert(_groundOverlaysController != null,
+        'Cannot update ground overlays after dispose().');
+    _groundOverlaysController?.addGroundOverlays(updates.groundOverlaysToAdd);
+    _groundOverlaysController
+        ?.changeGroundOverlays(updates.groundOverlaysToChange);
+    _groundOverlaysController
+        ?.removeGroundOverlays(updates.groundOverlayIdsToRemove);
+  }
+
   /// Applies [MarkerUpdates] to the currently managed markers.
   void updateMarkers(MarkerUpdates updates) {
     assert(
@@ -456,6 +478,7 @@ class GoogleMapController {
     _circlesController = null;
     _polygonsController = null;
     _polylinesController = null;
+    _groundOverlaysController = null;
     _markersController = null;
     _tileOverlaysController = null;
     _streamController.close();

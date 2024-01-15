@@ -530,3 +530,39 @@ gmaps.LatLng _pixelToLatLng(gmaps.GMap map, int x, int y) {
 
   return projection.fromPointToLatLng!(point)!;
 }
+
+/// Converts a [LatLngBounds] to a [gmaps.LatLngBounds].
+gmaps.LatLngBounds _latLngBoundsFromLatLngBounds(LatLngBounds latLngBounds) {
+  return gmaps.LatLngBounds(
+    gmaps.LatLng(
+      latLngBounds.southwest.latitude,
+      latLngBounds.southwest.longitude,
+    ),
+    gmaps.LatLng(
+      latLngBounds.northeast.latitude,
+      latLngBounds.northeast.longitude,
+    ),
+  );
+}
+
+// Converts a [BitmapDescriptor] into a url that can be with [GroundOverlayController].
+String _urlFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
+  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+
+  String? url;
+
+  if (iconConfig[0] == 'fromAssetImage') {
+    assert(iconConfig.length >= 2);
+    // iconConfig[2] contains the DPIs of the screen, but that information is
+    // already encoded in the iconConfig[1]
+    url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
+  } else if (iconConfig[0] == 'fromBytes') {
+    // Grab the bytes, and put them into a blob
+    final List<int> bytes = iconConfig[1]! as List<int>;
+    // Create a Blob from bytes, but let the browser figure out the encoding
+    final Blob blob = Blob(<dynamic>[bytes]);
+    url = Url.createObjectUrlFromBlob(blob);
+  }
+
+  return url!;
+}

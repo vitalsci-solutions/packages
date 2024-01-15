@@ -81,6 +81,15 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     _map(mapId).updatePolylines(polylineUpdates);
   }
 
+  /// Applies the passed in `groundOverlayUpdates` to the `mapId`.
+  @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) async {
+    _map(mapId).updateGroundOverlays(groundOverlayUpdates);
+  }
+
   /// Applies the passed in `circleUpdates` to the `mapId`.
   @override
   Future<void> updateCircles(
@@ -257,6 +266,11 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   @override
   Stream<PolylineTapEvent> onPolylineTap({required int mapId}) {
     return _events(mapId).whereType<PolylineTapEvent>();
+  }
+
+  @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return _events(mapId).whereType<GroundOverlayTapEvent>();
   }
 
   @override

@@ -38,3 +38,5 @@ part 'src/polygon.dart';
 part 'src/polygons.dart';
 part 'src/polyline.dart';
 part 'src/polylines.dart';
+part 'src/ground_overlay.dart';
+part 'src/ground_overlays.dart';
