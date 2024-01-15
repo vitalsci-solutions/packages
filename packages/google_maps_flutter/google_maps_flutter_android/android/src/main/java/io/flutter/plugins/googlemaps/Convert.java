@@ -203,6 +203,15 @@ class Convert {
     return data;
   }
 
+  static Object groundOverlayToJson(String groundOverlayId) {
+    if (groundOverlayId == null) {
+      return null;
+    }
+    final Map<String, Object> data = new HashMap<>(1);
+    data.put("groundOverlayId", groundOverlayId);
+    return data;
+  }
+
   static Map<String, Object> tileOverlayArgumentsToJson(
       String tileOverlayId, int x, int y, int zoom) {
 
@@ -448,6 +457,61 @@ class Convert {
     if (infoWindowAnchor != null) {
       final List<?> anchorData = toList(infoWindowAnchor);
       sink.setInfoWindowAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
+    }
+  }
+
+  static String interpretGroundOverlayOptions(Object o, GroundOverlayOptionsSink sink) {
+    final Map<?, ?> data = toMap(o);
+    final Object consumeTapEvents = data.get("consumeTapEvents");
+    if (consumeTapEvents != null) {
+      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
+    }
+    final Object position = data.get("position");
+    if (position != null) {
+      sink.setPosition(toLatLng(position));
+    }
+    final Object image = data.get("icon");
+    if (image != null) {
+      sink.setIcon(toBitmapDescriptor(image));
+    }
+    final Object bounds = data.get("bounds");
+    if (bounds != null) {
+      sink.setPositionFromBounds(toLatLngBounds(bounds));
+    }
+    final Object bearing = data.get("bearing");
+    if (bearing != null) {
+      sink.setBearing(toFloat(bearing));
+    }
+    final Object zIndex = data.get("zIndex");
+    if (zIndex != null) {
+      sink.setZIndex(toFloat(zIndex));
+    }
+    final Object visible = data.get("visible");
+    if (visible != null) {
+      sink.setVisible(toBoolean(visible));
+    }
+    final Object transparency = data.get("transparency");
+    if (transparency != null) {
+      sink.setTransparency(toFloat(transparency));
+    }
+    final Object clickable = data.get("tappable");
+    if (clickable != null) {
+      sink.setClickable(toBoolean(clickable));
+    }
+    final Object tag = data.get("title");
+    if (tag != null) {
+      sink.setTitle(toString(tag));
+    }
+    final Object opacity = data.get("opacity");
+    if (opacity != null) {
+      sink.setOpacity(toFloat(opacity));
+    }
+
+    final String GroundOverlayId = (String) data.get("groundOverlayId");
+    if (GroundOverlayId == null) {
+      throw new IllegalArgumentException("GroundOverlayId was null");
+    } else {
+      return GroundOverlayId;
     }
   }
 

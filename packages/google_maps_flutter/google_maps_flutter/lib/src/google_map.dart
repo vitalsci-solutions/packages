@@ -118,6 +118,7 @@ class GoogleMap extends StatefulWidget {
     this.markers = const <Marker>{},
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.circles = const <Circle>{},
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
@@ -196,6 +197,9 @@ class GoogleMap extends StatefulWidget {
 
   /// Polylines to be placed on the map.
   final Set<Polyline> polylines;
+
+  /// GroundOverlays to be placed on the map.
+  final Set<GroundOverlay> groundOverlays;
 
   /// Circles to be placed on the map.
   final Set<Circle> circles;
@@ -313,6 +317,8 @@ class _GoogleMapState extends State<GoogleMap> {
   Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays =
+      <GroundOverlayId, GroundOverlay>{};
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
   late MapConfiguration _mapConfiguration;
 
@@ -332,6 +338,7 @@ class _GoogleMapState extends State<GoogleMap> {
         markers: widget.markers,
         polygons: widget.polygons,
         polylines: widget.polylines,
+        groundOverlays: widget.groundOverlays,
         circles: widget.circles,
       ),
       mapConfiguration: _mapConfiguration,
@@ -345,6 +352,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _markers = keyByMarkerId(widget.markers);
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
     _circles = keyByCircleId(widget.circles);
   }
 
@@ -366,6 +374,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _updateMarkers();
     _updatePolygons();
     _updatePolylines();
+    _updateGroundOverlays();
     _updateCircles();
     _updateTileOverlays();
   }
@@ -400,6 +409,14 @@ class _GoogleMapState extends State<GoogleMap> {
     unawaited(controller._updatePolylines(
         PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
     _polylines = keyByPolylineId(widget.polylines);
+  }
+
+  Future<void> _updateGroundOverlays() async {
+    final GoogleMapController controller = await _controller.future;
+    // ignore: unawaited_futures
+    controller._updateGroundOverlays(GroundOverlayUpdates.from(
+        _groundOverlays.values.toSet(), widget.groundOverlays));
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   Future<void> _updateCircles() async {
@@ -489,6 +506,17 @@ class _GoogleMapState extends State<GoogleMap> {
       throw UnknownMapObjectIdError('polyline', polylineId, 'onTap');
     }
     final VoidCallback? onTap = polyline.onTap;
+    if (onTap != null) {
+      onTap();
+    }
+  }
+
+  void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
+    final GroundOverlay? groundOverlay = _groundOverlays[groundOverlayId];
+    if (groundOverlay == null) {
+      throw UnknownMapObjectIdError('groundOverlay', groundOverlayId, 'onTap');
+    }
+    final VoidCallback? onTap = groundOverlay.onTap;
     if (onTap != null) {
       onTap();
     }

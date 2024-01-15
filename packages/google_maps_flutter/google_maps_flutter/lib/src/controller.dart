@@ -68,6 +68,9 @@ class GoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onPolylineTap(mapId: mapId)
         .listen((PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value));
+    GoogleMapsFlutterPlatform.instance.onGroundOverlayTap(mapId: mapId).listen(
+        (GroundOverlayTapEvent e) =>
+            _googleMapState.onGroundOverlayTap(e.value));
     GoogleMapsFlutterPlatform.instance
         .onPolygonTap(mapId: mapId)
         .listen((PolygonTapEvent e) => _googleMapState.onPolygonTap(e.value));
@@ -123,6 +126,19 @@ class GoogleMapController {
   Future<void> _updatePolylines(PolylineUpdates polylineUpdates) {
     return GoogleMapsFlutterPlatform.instance
         .updatePolylines(polylineUpdates, mapId: mapId);
+  }
+
+  /// Updates ground overlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> _updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates) {
+    assert(groundOverlayUpdates != null);
+    return GoogleMapsFlutterPlatform.instance
+        .updateGroundOverlays(groundOverlayUpdates, mapId: mapId);
   }
 
   /// Updates circle configuration.

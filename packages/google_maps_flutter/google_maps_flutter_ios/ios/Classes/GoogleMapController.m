@@ -65,6 +65,7 @@
 @property(nonatomic, strong) FLTMarkersController *markersController;
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
+@property(nonatomic, strong) FLTGroundOverlaysController *groundOverlaysController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 
@@ -138,6 +139,9 @@
     _polylinesController = [[FLTPolylinesController alloc] init:_channel
                                                         mapView:_mapView
                                                       registrar:registrar];
+    _groundOverlaysController = [[FLTGroundOverlaysController alloc] init:_channel
+                                                                  mapView:_mapView
+                                                                registrar:registrar];
     _circlesController = [[FLTCirclesController alloc] init:_channel
                                                     mapView:_mapView
                                                   registrar:registrar];
@@ -155,6 +159,10 @@
     id polylinesToAdd = args[@"polylinesToAdd"];
     if ([polylinesToAdd isKindOfClass:[NSArray class]]) {
       [_polylinesController addPolylines:polylinesToAdd];
+    }
+    id groundOverlaysToAdd = args[@"groundOverlaysToAdd"];
+    if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+      [_groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
     }
     id circlesToAdd = args[@"circlesToAdd"];
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
@@ -333,6 +341,20 @@
       [self.polylinesController removePolylineWithIdentifiers:polylineIdsToRemove];
     }
     result(nil);
+  } else if ([call.method isEqualToString:@"groundOverlays#update"]) {
+    id groundOverlaysToAdd = call.arguments[@"groundOverlaysToAdd"];
+    if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
+    }
+    id groundOverlaysToChange = call.arguments[@"groundOverlaysToChange"];
+    if ([groundOverlaysToChange isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController changeGroundOverlays:groundOverlaysToChange];
+    }
+    id groundOverlayIdsToRemove = call.arguments[@"groundOverlayIdsToRemove"];
+    if ([groundOverlayIdsToRemove isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController removeGroundOverlayWithIdentifiers:groundOverlayIdsToRemove];
+    }
+    result(nil);  
   } else if ([call.method isEqualToString:@"circles#update"]) {
     id circlesToAdd = call.arguments[@"circlesToAdd"];
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
@@ -572,6 +594,8 @@
     [self.polygonsController didTapPolygonWithIdentifier:overlayId];
   } else if ([self.circlesController hasCircleWithIdentifier:overlayId]) {
     [self.circlesController didTapCircleWithIdentifier:overlayId];
+  } else if ([self.groundOverlaysController hasGroundOverlayWithIdentifier:overlayId]) {
+    [self.groundOverlaysController didTapGroundOverlayWithIdentifier:overlayId];
   }
 }
 
